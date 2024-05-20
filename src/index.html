@@ -1,12 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Les Petits Plats</title>
 	<link rel="stylesheet" href="./css/output.css"></link>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
 </head>
-<body>
-	<h1 class="text-purple-300">Hello world</h1>
+
+<body class="bg-light-grey">
+	<header class="bg-[url('/src/assets/img/background.svg')] bg-cover h-screen">
+		<h1 class="pt-12 pl-16">
+			<a href="#" class="inline-block">
+				<img class="h-6" src="/src/assets/img/Logo.svg" />
+			</a>
+		</h1>
+		<div class="flex justify-center text-center mx-auto mt-40">
+			<h2 class="text-yellow text-4xl font-title leading-normal">CHERCHEZ PARMI PLUS DE 1500 RECETTES<br> DU QUOTIDIEN,SIMPLES ET DÉLICIEUSES</h2>
+		</div>
+		<div class="flex justify-center mx-auto mt-8 relative w-2/3">
+			<input class="w-full h-16 pl-8 rounded-xl truncate focus:outline-none" placeholder="Rechercher une recette, un ingrédient, ..." type="text"></input>
+			<button class="absolute group rounded-lg p-3 top-1/2 right-2 transform -translate-y-1/2 bg-dark hover:bg-yellow">
+				<svg class="stroke-white group-hover:stroke-dark" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="10" cy="10" r="9.5"/>
+					<line x1="18.3536" y1="18.6464" x2="27.3536" y2="27.6464"/>
+				</svg>
+			</button>
+			<button class="absolute top-1/2 right-20 text-4xl text-grey transform -translate-y-1/2">
+				&times
+			</button>
+		</div>
+	</header>
+	<section class="mx-28 mt-16 flex justify-between">
+		<div>
+			<select></select>
+			<select></select>
+			<select></select>
+		</div>
+		<span>1500</span>
+	</section>
+	<section>
+		recipe
+	</section>
 </body>
+
 </html>
