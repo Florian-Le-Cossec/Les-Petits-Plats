@@ -7,7 +7,8 @@ module.exports = {
         yellow: '#FFD15B',
         dark: '#1B1B1B',
         grey: '#7A7A7A',
-        'light-grey': '#C6C6C6'
+        'light-grey': '#EDEDED',
+        'lighter-grey': '#C6C6C6'
       },
       fontFamily: {
         'sans': ['"Manrope", sans-serif'],
