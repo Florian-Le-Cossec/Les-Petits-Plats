@@ -33,12 +33,13 @@ recipes.forEach(recipe => {
 function displaySelector(data, type) {
 	const selectorTemplate = new SelectorTemplate(data, type);
 	selectorTemplate.generate();
+	selectorTemplate.handleClearInput();
 }
 
 function init() {
-	displaySelector(listIngredients, 'Ingredients');
-	displaySelector(listUstensils, 'Ustensils');
-	displaySelector(listAppliances, 'Appliances');
+	displaySelector(listIngredients.sort(), 'Ingredients');
+	displaySelector(listUstensils.sort(), 'Ustensils');
+	displaySelector(listAppliances.sort(), 'Appliances');
 }
 
 init();
