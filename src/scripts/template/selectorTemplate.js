@@ -78,7 +78,8 @@ export class SelectorTemplate {
 
 		this.handleSearch();
 		this.handleAddTag();
-		this.handleRemoveTag();
+		this.handleRemoveTagFromList();
+		this.handleRemoveTagFromTagList();
 		this.handleClearInput();
 	}
 
@@ -152,17 +153,50 @@ export class SelectorTemplate {
 		});
 	}
 
-	handleRemoveTag() {
+	handleRemoveTagFromList() {
 		const dropdownListItems = this.selector.querySelectorAll('ul li');
 		const tagList = document.querySelector('.tag-list');
+		
 		dropdownListItems.forEach(item => {
-			const svgItem = item.querySelector('.remove-item-button')
-			svgItem.addEventListener('click', () => {
+			const svgItem = item.querySelector('.remove-item-button');
+			svgItem.addEventListener('click', (event) => {
+				event.stopPropagation();
+
+				const existingTags = tagList.querySelectorAll('.tag');
+				existingTags.forEach(tag => {
+					const span = tag.querySelector('span:first-child');
+					
+					if (span.textContent === item.textContent) {
+						tag.remove();
+					}
+				});
 				svgItem.classList.add('hidden');
 				item.classList.remove('bg-yellow');
-				console.log(tagList);
 			});
 		});
 	}
-}
 
+	handleRemoveTagFromTagList() {
+		const tagList = document.querySelector('.tag-list');
+		const dropdownListItems = this.selector.querySelectorAll('ul li');
+
+		tagList.addEventListener('click', (event) => {
+			if (event.target.closest('.remove-tag-button')) {
+				const tag = event.target.closest('.tag');
+				const tagName = tag.querySelector('span').textContent;
+
+				tag.remove();
+				
+				dropdownListItems.forEach(item => {
+					if (item.textContent === tagName) {
+						const removeItemBtn = item.querySelector('.remove-item-button');
+						if (removeItemBtn) {
+							removeItemBtn.classList.add('hidden');
+						}
+						item.classList.remove('bg-yellow');
+					}
+				});
+			}
+		});
+	}
+}
