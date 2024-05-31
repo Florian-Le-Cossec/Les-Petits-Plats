@@ -582,71 +582,85 @@ video {
   top: 50%;
 }
 
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.my-6 {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
 }
 
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
-.mt-16 {
-  margin-top: 4rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.mt-40 {
-  margin-top: 10rem;
-}
-
-.mt-8 {
-  margin-top: 2rem;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
-}
-
-.mb-6 {
-  margin-bottom: 1.5rem;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.mt-\[14px\] {
-  margin-top: 14px;
-}
-
-.mt-\[\] {
-  margin-top: ;
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .mt-1 {
   margin-top: 0.25rem;
 }
 
+.mt-16 {
+  margin-top: 4rem;
+}
+
 .mt-3 {
   margin-top: 0.75rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-40 {
+  margin-top: 10rem;
+}
+
 .mt-5 {
   margin-top: 1.25rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-14 {
+  margin-top: 3.5rem;
+}
+
+.mt-7 {
+  margin-top: 1.75rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.mb-3\.5 {
+  margin-bottom: 0.875rem;
+}
+
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-12 {
+  margin-bottom: 3rem;
+}
+
+.line-clamp-4 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.block {
+  display: block;
 }
 
 .inline-block {
@@ -655,6 +669,10 @@ video {
 
 .flex {
   display: flex;
+}
+
+.grid {
+  display: grid;
 }
 
 .hidden {
@@ -669,6 +687,10 @@ video {
   height: 1.5rem;
 }
 
+.h-\[50px\] {
+  height: 50px;
+}
+
 .h-min {
   height: -moz-min-content;
   height: min-content;
@@ -678,28 +700,12 @@ video {
   height: 100vh;
 }
 
-.h-\[30px\] {
-  height: 30px;
+.h-\[200px\] {
+  height: 200px;
 }
 
-.h-\[px\] {
-  height: px;
-}
-
-.h-\[53px\] {
-  height: 53px;
-}
-
-.h-\[50px\] {
-  height: 50px;
-}
-
-.max-h-48 {
-  max-height: 12rem;
-}
-
-.max-h-5 {
-  max-height: 1.25rem;
+.h-\[250px\] {
+  height: 250px;
 }
 
 .max-h-52 {
@@ -710,6 +716,42 @@ video {
   min-height: 100vh;
 }
 
+.min-h-0 {
+  min-height: 0px;
+}
+
+.min-h-\[730px\] {
+  min-height: 730px;
+}
+
+.min-h-\[70px\] {
+  min-height: 70px;
+}
+
+.min-h-\[760px\] {
+  min-height: 760px;
+}
+
+.min-h-\[755px\] {
+  min-height: 755px;
+}
+
+.min-h-\[7px\] {
+  min-height: 7px;
+}
+
+.min-h-\[720px\] {
+  min-height: 720px;
+}
+
+.min-h-\[735px\] {
+  min-height: 735px;
+}
+
+.min-h-\[740px\] {
+  min-height: 740px;
+}
+
 .w-2\/3 {
   width: 66.666667%;
 }
@@ -718,24 +760,12 @@ video {
   width: 200px;
 }
 
-.w-full {
-  width: 100%;
-}
-
-.w-\[\] {
-  width: ;
-}
-
-.w-\[220px\] {
-  width: 220px;
-}
-
 .w-\[210px\] {
   width: 210px;
 }
 
-.w-\[208px\] {
-  width: 208px;
+.w-full {
+  width: 100%;
 }
 
 .-translate-y-1\/2 {
@@ -756,6 +786,30 @@ video {
   cursor: pointer;
 }
 
+.list-inside {
+  list-style-position: inside;
+}
+
+.list-disc {
+  list-style-type: disc;
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
 .flex-wrap {
   flex-wrap: wrap;
 }
@@ -772,16 +826,46 @@ video {
   justify-content: space-between;
 }
 
-.gap-1 {
-  gap: 0.25rem;
-}
-
 .gap-16 {
   gap: 4rem;
 }
 
 .gap-2 {
   gap: 0.5rem;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-5 {
+  gap: 1.25rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.gap-y-2 {
+  row-gap: 0.5rem;
+}
+
+.gap-x-4 {
+  -moz-column-gap: 1rem;
+       column-gap: 1rem;
+}
+
+.gap-y-6 {
+  row-gap: 1.5rem;
+}
+
+.gap-x-6 {
+  -moz-column-gap: 1.5rem;
+       column-gap: 1.5rem;
+}
+
+.overflow-hidden {
+  overflow: hidden;
 }
 
 .overflow-y-auto {
@@ -806,9 +890,18 @@ video {
   border-radius: 0.75rem;
 }
 
+.rounded-2xl {
+  border-radius: 1rem;
+}
+
 .rounded-b-xl {
   border-bottom-right-radius: 0.75rem;
   border-bottom-left-radius: 0.75rem;
+}
+
+.rounded-t-xl {
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
 }
 
 .border {
@@ -864,6 +957,11 @@ video {
   stroke: #fff;
 }
 
+.object-cover {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
 .p-2 {
   padding: 0.5rem;
 }
@@ -880,19 +978,23 @@ video {
   padding: 1rem;
 }
 
+.p-6 {
+  padding: 1.5rem;
+}
+
 .px-28 {
   padding-left: 7rem;
   padding-right: 7rem;
 }
 
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .pl-16 {
@@ -903,32 +1005,16 @@ video {
   padding-left: 2rem;
 }
 
-.pt-12 {
-  padding-top: 3rem;
-}
-
-.pl-4 {
-  padding-left: 1rem;
-}
-
-.pr-4 {
-  padding-right: 1rem;
-}
-
-.pr-6 {
-  padding-right: 1.5rem;
-}
-
-.pr-8 {
-  padding-right: 2rem;
-}
-
 .pr-12 {
   padding-right: 3rem;
 }
 
-.pr-10 {
-  padding-right: 2.5rem;
+.pt-12 {
+  padding-top: 3rem;
+}
+
+.pb-0 {
+  padding-bottom: 0px;
 }
 
 .text-center {
@@ -949,8 +1035,43 @@ video {
   line-height: 1.25rem;
 }
 
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
 .leading-normal {
   line-height: 1.5;
+}
+
+.tracking-\[1\] {
+  letter-spacing: 1;
+}
+
+.tracking-\[1\.0\] {
+  letter-spacing: 1.0;
+}
+
+.tracking-\[1\.08px\] {
+  letter-spacing: 1.08px;
 }
 
 .text-grey {
@@ -961,6 +1082,11 @@ video {
 .text-yellow {
   --tw-text-opacity: 1;
   color: rgb(255 209 91 / var(--tw-text-opacity));
+}
+
+.text-dark {
+  --tw-text-opacity: 1;
+  color: rgb(27 27 27 / var(--tw-text-opacity));
 }
 
 .filter {
@@ -977,9 +1103,24 @@ video {
   transition-duration: 300ms;
 }
 
-.hover\:bg-gray-200:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+.last\:mb-0:last-child {
+  margin-bottom: 0px;
+}
+
+.last\:mb-2:last-child {
+  margin-bottom: 0.5rem;
+}
+
+.last\:mb-1:last-child {
+  margin-bottom: 0.25rem;
+}
+
+.last\:mb-5:last-child {
+  margin-bottom: 1.25rem;
+}
+
+.last\:mb-8:last-child {
+  margin-bottom: 2rem;
 }
 
 .hover\:bg-yellow:hover {
@@ -994,4 +1135,12 @@ video {
 
 .group:hover .group-hover\:stroke-dark {
   stroke: #1B1B1B;
+}
+
+.\[\&\:nth-last-child\(2\)\]\:mb-0:nth-last-child(2) {
+  margin-bottom: 0px;
+}
+
+.\[\&\:nth-last-child\(3\)\]\:mb-0:nth-last-child(3) {
+  margin-bottom: 0px;
 }

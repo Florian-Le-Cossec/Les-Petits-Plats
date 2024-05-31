@@ -1,5 +1,7 @@
 import { recipes } from '../data/recipes.js';
 import { SelectorTemplate } from './template/selectorTemplate.js';
+import RecipeTemplate from './template/RecipeTemplate.js';
+import RecipeModel from './models/RecipeModel.js';
 
 const listIngredients = [];
 const listUstensils = [];
@@ -30,6 +32,16 @@ recipes.forEach(recipe => {
     }
 });
 
+function displayRecipes(recipes) {
+	recipes
+        .map(recipe => new RecipeModel(recipe))
+        .forEach(recipe => {
+            const recipeTemplate = new RecipeTemplate(recipe);
+            recipeTemplate.generate();
+        });
+
+}
+
 function displaySelector(data, type) {
 	const selectorTemplate = new SelectorTemplate(data, type);
 	selectorTemplate.generate();
@@ -37,9 +49,10 @@ function displaySelector(data, type) {
 }
 
 function init() {
-	displaySelector(listIngredients.sort(), 'Ingredients');
-	displaySelector(listUstensils.sort(), 'Ustensils');
-	displaySelector(listAppliances.sort(), 'Appliances');
+	displaySelector(listIngredients.sort(), 'Ingrédients');
+	displaySelector(listAppliances.sort(), 'Appareils');
+	displaySelector(listUstensils.sort(), 'Ustensiles');
+    displayRecipes(recipes);
 }
 
 init();

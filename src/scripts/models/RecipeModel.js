@@ -1,4 +1,4 @@
-class Recipe {
+export default class RecipeModel {
     constructor(data) {
         this.id = data.id;
         this.image = data.image;
