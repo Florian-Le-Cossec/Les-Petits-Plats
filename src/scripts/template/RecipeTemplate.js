@@ -11,7 +11,9 @@ export default class RecipeTemplate {
 			return new Ingredient(ingredient.ingredient, ingredient.quantity, ingredient.unit);
 		});
 
-
+		const emptyHtml = /*html*/`
+			<h3>Aucune recette trouvée</h3>
+		`;
 		const recipeHtml = 
 		/*html*/
 		`
@@ -41,7 +43,6 @@ export default class RecipeTemplate {
 				</div>
 			</article>
 		`;
-
 		const linkElement = document.createElement('a');
 		linkElement.href = `#`;
 		linkElement.innerHTML = recipeHtml;
@@ -49,6 +50,6 @@ export default class RecipeTemplate {
 			e.preventDefault();
 		});
 		
-		recipesContainer.appendChild(linkElement);
+		return linkElement
 	}
 }

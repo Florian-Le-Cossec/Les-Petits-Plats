@@ -1,59 +1,147 @@
 import { recipes } from '../data/recipes.js';
 import { SelectorTemplate } from './template/selectorTemplate.js';
+import { formatString } from './utils.js';
 import RecipeTemplate from './template/RecipeTemplate.js';
 import RecipeModel from './models/RecipeModel.js';
 
-const listIngredients = [];
-const listUstensils = [];
-const listAppliances = [];
+// function pour initialiser les selectors
+function initializeSelectors() {
+    // créer des sets pour stocker les valeurs des selectors et éviter les doublons
+    const listIngredients = new Set();
+    const listUstensils = new Set();
+    const listAppliances = new Set();
 
-recipes.forEach(recipe => {
-    recipe.ingredients.forEach(item => {
-        const formattedIngredient = item.ingredient.charAt(0).toUpperCase() + item.ingredient.slice(1).toLowerCase();
-        if (!listIngredients.includes(formattedIngredient)) {
-            listIngredients.push(formattedIngredient);
-        }
+    // parcourir les recettes pour ajouter les valeurs des selectors au set
+    recipes.forEach(recipe => {
+        recipe.ingredients.forEach(item => listIngredients.add(formatString(item.ingredient)));
+        recipe.ustensils.forEach(item => listUstensils.add(formatString(item)));
+        listAppliances.add(formatString(recipe.appliance));
     });
-});
 
-recipes.forEach(recipe => {
-    recipe.ustensils.forEach(item => {
-		const formattedUstensil = item.charAt(0).toUpperCase() + item.slice(1).toLowerCase();
-        if (!listUstensils.includes(formattedUstensil)) {
-            listUstensils.push(formattedUstensil);
-        }
+    // convertir les sets en tableaux triés
+    const sortedIngredients = [...listIngredients].sort();
+    const sortedUstensils = [...listUstensils].sort();
+    const sortedAppliances = [...listAppliances].sort();
+
+    // créer les selectors
+    const ingredientSelector = new SelectorTemplate(sortedIngredients, 'Ingrédients');
+    const ustensilSelector = new SelectorTemplate(sortedUstensils, 'Ustensiles');
+    const applianceSelector = new SelectorTemplate(sortedAppliances, 'Appareils');
+
+    // générer les selectors
+    ingredientSelector.generate();
+    ustensilSelector.generate();
+    applianceSelector.generate();
+
+    // retourner les selectors  
+    return { ingredientSelector, ustensilSelector, applianceSelector };
+}
+// appeler la fonction pour initialiser les selectors
+const { ingredientSelector, ustensilSelector, applianceSelector } = initializeSelectors();
+
+// function pour filtrer les recettes par tags
+function filterRecipesByTags(tags) {
+    // filtrer les recettes par tags
+    const filteredRecipes = recipes.filter(recipe => {
+        // vérifier si l'ingredient, l'ustensil ou l'appareil correspondent au tag
+        // every() vérifie que tous les tags correspondent au tag
+        const ingredientsMatch = tags.every(tag => 
+            // some() vérifie que l'ingredient correspond au tag
+            recipe.ingredients.some(ingredient => 
+                ingredient.ingredient.toLowerCase() === tag.toLowerCase()
+            )
+        );
+        const ustensilsMatch = tags.every(tag => 
+            recipe.ustensils.some(ustensil => 
+                ustensil.toLowerCase() === tag.toLowerCase()
+            )
+        );
+        const appliancesMatch = tags.every(tag => 
+            recipe.appliance.toLowerCase() === tag.toLowerCase()
+        );
+
+        // retourner true si l'ingredient, l'ustensil ou l'appareil correspondent au tag
+        return ingredientsMatch || ustensilsMatch || appliancesMatch;
     });
+
+    // mettre à jour les selectors
+    updateSelectors(filteredRecipes);
+    // retourner les recettes filtrées
+    return filteredRecipes;
+}
+
+// function pour mettre à jour les selectors
+function updateSelectors(filteredRecipes) {
+    // créer des sets pour stocker les nouvelles valeurs des selectors et éviter les doublons
+    const newIngredients = new Set();
+    const newUstensils = new Set();
+    const newAppliances = new Set();
+
+    // parcourir les recettes filtrées pour ajouter les nouvelles valeurs des selectors au set
+    filteredRecipes.forEach(recipe => {
+        recipe.ingredients.forEach(item => newIngredients.add(formatString(item.ingredient)));
+        recipe.ustensils.forEach(item => newUstensils.add(formatString(item)));
+        newAppliances.add(formatString(recipe.appliance));
+    });
+
+    // mettre à jour les selectors
+    ingredientSelector.updateData([...newIngredients].sort());
+    ustensilSelector.updateData([...newUstensils].sort());
+    applianceSelector.updateData([...newAppliances].sort());
+}
+
+
+// écouter l'événement custom tagChanged
+document.addEventListener('tagChanged', (event) => {
+    // récupérer les tags
+    const tags = event.detail.tags;
+    // filtrer les recettes par tags
+    const filteredRecipes = filterRecipesByTags(tags);
+    // afficher les recettes filtrées
+    displayRecipes(filteredRecipes);
 });
 
-recipes.forEach(recipe => {
-	const formattedAppliance = recipe.appliance.charAt(0).toUpperCase() + recipe.appliance.slice(1).toLowerCase();
-    if (!listAppliances.includes(formattedAppliance)) {
-        listAppliances.push(formattedAppliance);
-    }
-});
+// function pour vider le conteneur des recettes
+function clearRecipes() {
+    const recipeContainer = document.querySelector('.recipes');
+    recipeContainer.innerHTML = '';
+}
 
+// function pour afficher les recettes
 function displayRecipes(recipes) {
-	recipes
-        .map(recipe => new RecipeModel(recipe))
-        .forEach(recipe => {
-            const recipeTemplate = new RecipeTemplate(recipe);
-            recipeTemplate.generate();
-        });
+    // vider le conteneur des recettes
+    clearRecipes();
+    // sélectionner le conteneur des recettes
+    const recipeContainer = document.querySelector('.recipes');
 
+    // vérifier si il n'y a pas de recette  
+    if (recipes.length === 0) {
+        // créer un élément h3 pour afficher un message
+        const noRecipeMessage = document.createElement('h3');
+        noRecipeMessage.textContent = 'Aucune recette trouvée';
+        recipeContainer.appendChild(noRecipeMessage);
+    }
+
+    // parcourir les recettes pour afficher les recettes    
+    recipes.forEach(recipe => {
+        // créer un nouveau modèle de recette
+        const recipeModel = new RecipeModel(recipe);
+        const recipeTemplate = new RecipeTemplate(recipeModel);
+        const recipeElement = recipeTemplate.generate();
+        recipeContainer.appendChild(recipeElement);
+    });
+    const recipeNumber = document.querySelector('.recipe-number');
+    
+    if (recipes.length === 1) {
+        recipeNumber.textContent = `${recipes.length} recette`;
+    } else {
+        recipeNumber.textContent = `${recipes.length} recettes`;
+    }
 }
 
-function displaySelector(data, type) {
-	const selectorTemplate = new SelectorTemplate(data, type);
-	selectorTemplate.generate();
-	selectorTemplate.handleClearInput();
-}
-
+// function pour initialiser l'application
 function init() {
-	displaySelector(listIngredients.sort(), 'Ingrédients');
-	displaySelector(listAppliances.sort(), 'Appareils');
-	displaySelector(listUstensils.sort(), 'Ustensiles');
     displayRecipes(recipes);
 }
 
 init();
-

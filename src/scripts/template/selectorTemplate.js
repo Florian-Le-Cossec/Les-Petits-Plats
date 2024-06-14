@@ -3,6 +3,7 @@ export class SelectorTemplate {
 		this.data = data;
 		this.type = type;
 		this.selector = null;
+		this.listOfTags = [];
 	}
 
 	generate() {
@@ -29,7 +30,7 @@ export class SelectorTemplate {
 		`;
 
 		const itemList = this.data.map(item => /*html*/ `<li class="flex items-center justify-between py-2 px-4 text-sm hover:bg-yellow cursor-pointer">
-		${item} 
+		<span>${item}</span>
 		<svg class="remove-item-button fill-dark hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
 			<circle cx="8.5" cy="8.5" r="8.5"/>
 			<path d="M11 11L8.5 8.5M8.5 8.5L6 6M8.5 8.5L11 6M8.5 8.5L6 11" stroke="#FFD15B" stroke-linecap="round" stroke-linejoin="round"/>
@@ -40,7 +41,7 @@ export class SelectorTemplate {
 		/*html*/
 		`
 			${searchInput}
-			<ul class="max-h-52 overflow-y-auto mt-4">
+			<ul class="max-h-52 overflow-y-auto mt-4 w-[200px]">
 				${itemList}
 			</ul>
 		`;
@@ -57,7 +58,7 @@ export class SelectorTemplate {
 						</svg>
 					</span>
 				</button>
-			<div class="hidden absolute mt-1 h-min bg-white left-0 rounded-b-xl">${dropdownList}</div>
+				<div class="hidden absolute mt-1 h-min bg-white left-0 rounded-b-xl">${dropdownList}</div>
 			</div>
 		`;
 		const tempDiv = document.createElement('div');
@@ -67,12 +68,13 @@ export class SelectorTemplate {
 		this.selector.querySelector('.selector__button').addEventListener('click', function () {
 			const dropdown = this.nextElementSibling;
 			const chevron = this.querySelector('.chevron');
-			const searchInput = document.querySelector('.search-input');
+			const searchInput = this.parentElement.querySelector('.search-input');
 			
 			dropdown.classList.toggle('hidden');
 			chevron.classList.toggle('rotate-180');
 			searchInput.focus();
 		});
+
 
 		selectContainer.appendChild(this.selector);
 
@@ -83,9 +85,51 @@ export class SelectorTemplate {
 		this.handleClearInput();
 	}
 
+	updateData(newData) {
+		// mettre à jour les données
+		this.data = newData;
+		const dropdownList = this.selector.querySelector('ul');
+
+		// permet de trier les tags afin d'avoir ceux qui sont selectionnés en premier
+		const sortedData = [...this.data].sort((a, b) => {
+			const aSelected = this.listOfTags.includes(a);
+			const bSelected = this.listOfTags.includes(b);
+			if (aSelected && !bSelected) return -1;
+			if (!aSelected && bSelected) return 1;
+			return a.localeCompare(b);
+		});
+
+		const itemList = sortedData.map(item => /*html*/ `<li class="flex items-center justify-between py-2 px-4 text-sm hover:bg-yellow cursor-pointer">
+		<span>${item}</span>
+		<svg class="remove-item-button fill-dark hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+			<circle cx="8.5" cy="8.5" r="8.5"/>
+			<path d="M11 11L8.5 8.5M8.5 8.5L6 6M8.5 8.5L11 6M8.5 8.5L6 11" stroke="#FFD15B" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>
+		</li>`).join('');
+		dropdownList.innerHTML = itemList;
+		this.handleAddTag();
+		this.handleRemoveTagFromList();
+		this.handleRemoveTagFromTagList();
+		this.applyStyles();
+	}
+
+	applyStyles() {
+		const dropdownListItems = this.selector.querySelectorAll('ul li');
+		dropdownListItems.forEach(item => {
+			const itemName = item.querySelector('span').textContent;
+			if (this.listOfTags.includes(itemName)) {
+				item.classList.add('bg-yellow');
+				const removeItemBtn = item.querySelector('.remove-item-button');
+				if (removeItemBtn) {
+					removeItemBtn.classList.remove('hidden');
+				}
+			}
+		});
+	}
+
 	handleClearInput() {
-		const searchInput = document.querySelector('.search-input');
-		const clearButton = document.querySelector('.clear-button');
+		const searchInput = this.selector.querySelector('.search-input');
+		const clearButton = this.selector.querySelector('.clear-button');
 		searchInput.addEventListener('input', (e) => {
 			if(e.target.value) {
 				clearButton.classList.remove('hidden');
@@ -109,16 +153,29 @@ export class SelectorTemplate {
 		searchInput.addEventListener('input', () => {
 			const query = searchInput.value.toLowerCase();
 			const filteredData = query ? this.data.filter(item => item.toLowerCase().includes(query)) : this.data;
-			const itemList = filteredData.map(item => `<li class="py-2 px-4 text-sm hover:bg-yellow cursor-pointer">${item}</li>`).join('');
+			const itemList = filteredData.map(item => /*html*/ `<li class="flex items-center justify-between py-2 px-4 text-sm hover:bg-yellow cursor-pointer">
+			<span>${item}</span>
+			<svg class="remove-item-button fill-dark hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+				<circle cx="8.5" cy="8.5" r="8.5"/>
+				<path d="M11 11L8.5 8.5M8.5 8.5L6 6M8.5 8.5L11 6M8.5 8.5L6 11" stroke="#FFD15B" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+			</li>`).join('');
+
 			dropdownList.innerHTML = itemList;
+			this.handleAddTag();
+			this.handleRemoveTagFromList();
+			this.handleRemoveTagFromTagList();
+			this.applyStyles();
 		});
 	}
 
 	handleAddTag() {
 		const dropdownListItems = this.selector.querySelectorAll('ul li');
+		const searchInput = this.selector.querySelector('.search-input');
 		dropdownListItems.forEach(item => {
-			item.addEventListener('click', () => {
-				const selectedItem = item.textContent;
+			item.addEventListener('click', (event) => {
+				event.stopPropagation();
+				const selectedItem = item.querySelector('span').textContent;
 				const tagList = document.querySelector('.tag-list');
 				const existingTags = tagList.querySelectorAll('.tag span:first-child');
 				let isAlreadySelected = false;
@@ -142,12 +199,17 @@ export class SelectorTemplate {
 							</button>
 						</div>
 					`;
+
+					this.listOfTags.push(selectedItem);
+					const event = new CustomEvent('tagChanged', { detail: { tags: this.listOfTags } });
+					document.dispatchEvent(event);
 					tagList.innerHTML += tag;
 					item.classList.add('bg-yellow');
 					const removeItemBtn = item.querySelector('.remove-item-button');
 					if (removeItemBtn) {
 						removeItemBtn.classList.remove('hidden');
 					}
+					searchInput.value = '';
 				}
 			});
 		});
@@ -155,19 +217,22 @@ export class SelectorTemplate {
 
 	handleRemoveTagFromList() {
 		const dropdownListItems = this.selector.querySelectorAll('ul li');
-		const tagList = document.querySelector('.tag-list');
+		const tagListElement = document.querySelector('.tag-list');
 		
 		dropdownListItems.forEach(item => {
 			const svgItem = item.querySelector('.remove-item-button');
 			svgItem.addEventListener('click', (event) => {
 				event.stopPropagation();
 
-				const existingTags = tagList.querySelectorAll('.tag');
+				const existingTags = tagListElement.querySelectorAll('.tag');
 				existingTags.forEach(tag => {
 					const span = tag.querySelector('span:first-child');
 					
-					if (span.textContent === item.textContent) {
+					if (span.textContent === item.querySelector('span').textContent) {
 						tag.remove();
+						this.listOfTags = this.listOfTags.filter(item => item !== span.textContent);
+						const newEvent = new CustomEvent('tagChanged', { detail: { tags: this.listOfTags } });
+						document.dispatchEvent(newEvent);
 					}
 				});
 				svgItem.classList.add('hidden');
@@ -177,10 +242,10 @@ export class SelectorTemplate {
 	}
 
 	handleRemoveTagFromTagList() {
-		const tagList = document.querySelector('.tag-list');
+		const tagListElement = document.querySelector('.tag-list');
 		const dropdownListItems = this.selector.querySelectorAll('ul li');
 
-		tagList.addEventListener('click', (event) => {
+		tagListElement.addEventListener('click', (event) => {
 			if (event.target.closest('.remove-tag-button')) {
 				const tag = event.target.closest('.tag');
 				const tagName = tag.querySelector('span').textContent;
@@ -188,10 +253,14 @@ export class SelectorTemplate {
 				tag.remove();
 				
 				dropdownListItems.forEach(item => {
-					if (item.textContent === tagName) {
+					if (item.querySelector('span').textContent === tagName) {
 						const removeItemBtn = item.querySelector('.remove-item-button');
 						if (removeItemBtn) {
 							removeItemBtn.classList.add('hidden');
+
+							this.listOfTags = this.listOfTags.filter(item => item !== tagName);
+							const newEvent = new CustomEvent('tagChanged', { detail: { tags: this.listOfTags } });
+							document.dispatchEvent(newEvent);
 						}
 						item.classList.remove('bg-yellow');
 					}
@@ -199,5 +268,4 @@ export class SelectorTemplate {
 			}
 		});
 	}
-	
 }
