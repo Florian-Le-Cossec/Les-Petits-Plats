@@ -4,6 +4,8 @@ import { formatString } from './utils.js';
 import RecipeTemplate from './template/RecipeTemplate.js';
 import RecipeModel from './models/RecipeModel.js';
 
+let selectedTags = [];
+
 // function pour initialiser les selectors
 function initializeSelectors() {
     // créer des sets pour stocker les valeurs des selectors et éviter les doublons
@@ -43,29 +45,17 @@ const { ingredientSelector, ustensilSelector, applianceSelector } = initializeSe
 function filterRecipesByTags(tags) {
     // filtrer les recettes par tags
     const filteredRecipes = recipes.filter(recipe => {
-        // vérifier si l'ingredient, l'ustensil ou l'appareil correspondent au tag
-        // every() vérifie que tous les tags correspondent au tag
-        const ingredientsMatch = tags.every(tag => 
-            // some() vérifie que l'ingredient correspond au tag
-            recipe.ingredients.some(ingredient => 
-                ingredient.ingredient.toLowerCase() === tag.toLowerCase()
-            )
-        );
-        const ustensilsMatch = tags.every(tag => 
-            recipe.ustensils.some(ustensil => 
-                ustensil.toLowerCase() === tag.toLowerCase()
-            )
-        );
-        const appliancesMatch = tags.every(tag => 
+        // vérifier si chaque tag correspond à un ingrédient, un ustensil ou un appareil
+        return tags.every(tag => 
+            recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase() === tag.toLowerCase()) ||
+            recipe.ustensils.some(ustensil => ustensil.toLowerCase() === tag.toLowerCase()) ||
             recipe.appliance.toLowerCase() === tag.toLowerCase()
         );
-
-        // retourner true si l'ingredient, l'ustensil ou l'appareil correspondent au tag
-        return ingredientsMatch || ustensilsMatch || appliancesMatch;
     });
 
     // mettre à jour les selectors
     updateSelectors(filteredRecipes);
+    
     // retourner les recettes filtrées
     return filteredRecipes;
 }
@@ -90,14 +80,31 @@ function updateSelectors(filteredRecipes) {
     applianceSelector.updateData([...newAppliances].sort());
 }
 
-
-// écouter l'événement custom tagChanged
-document.addEventListener('tagChanged', (event) => {
+// écouter l'événement custom tagAdded
+document.addEventListener('tagAdded', (event) => {
     // récupérer les tags
     const tags = event.detail.tags;
+    
+    // ajouter les tags à selectedTags en évitant les doublons
+    selectedTags = [...new Set([...selectedTags, ...tags])];
+    
     // filtrer les recettes par tags
-    const filteredRecipes = filterRecipesByTags(tags);
+    const filteredRecipes = filterRecipesByTags(selectedTags);
+    
     // afficher les recettes filtrées
+    displayRecipes(filteredRecipes);
+});
+
+document.addEventListener('tagRemoved', (event) => {
+    // récupérer les tags
+    const tags = event.detail.tags;
+
+    // Filtrer les tags à supprimer
+    const uniqueTags = [...new Set(tags)];
+    selectedTags = selectedTags.filter(tag => !uniqueTags.includes(tag));
+
+    // Filtrer et afficher les recettes
+    const filteredRecipes = filterRecipesByTags(selectedTags);
     displayRecipes(filteredRecipes);
 });
 

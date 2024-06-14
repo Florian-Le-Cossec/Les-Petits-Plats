@@ -4,6 +4,7 @@ export class SelectorTemplate {
 		this.type = type;
 		this.selector = null;
 		this.listOfTags = [];
+		this.eventsAdded = false;
 	}
 
 	generate() {
@@ -201,7 +202,7 @@ export class SelectorTemplate {
 					`;
 
 					this.listOfTags.push(selectedItem);
-					const event = new CustomEvent('tagChanged', { detail: { tags: this.listOfTags } });
+					const event = new CustomEvent('tagAdded', { detail: { tags: this.listOfTags } });
 					document.dispatchEvent(event);
 					tagList.innerHTML += tag;
 					item.classList.add('bg-yellow');
@@ -224,14 +225,16 @@ export class SelectorTemplate {
 			svgItem.addEventListener('click', (event) => {
 				event.stopPropagation();
 
+				const tagName = item.querySelector('span').textContent;
 				const existingTags = tagListElement.querySelectorAll('.tag');
+				
 				existingTags.forEach(tag => {
 					const span = tag.querySelector('span:first-child');
 					
-					if (span.textContent === item.querySelector('span').textContent) {
+					if (span.textContent === tagName) {
 						tag.remove();
-						this.listOfTags = this.listOfTags.filter(item => item !== span.textContent);
-						const newEvent = new CustomEvent('tagChanged', { detail: { tags: this.listOfTags } });
+						this.listOfTags = this.listOfTags.filter(tag => tag !== tagName);
+						const newEvent = new CustomEvent('tagRemoved', { detail: { tags: [tagName] } });
 						document.dispatchEvent(newEvent);
 					}
 				});
@@ -242,29 +245,37 @@ export class SelectorTemplate {
 	}
 
 	handleRemoveTagFromTagList() {
+		// flag pour éviter d'ajouter plusieurs fois les événements
+		if (this.eventsAdded) return;
+		this.eventsAdded = true;
+
 		const tagListElement = document.querySelector('.tag-list');
 		const dropdownListItems = this.selector.querySelectorAll('ul li');
 
 		tagListElement.addEventListener('click', (event) => {
-			if (event.target.closest('.remove-tag-button')) {
-				const tag = event.target.closest('.tag');
+			event.stopPropagation();
+			const removeButton = event.target.closest('.remove-tag-button');
+			if (removeButton) {
+				const tag = removeButton.closest('.tag');
 				const tagName = tag.querySelector('span').textContent;
 
+				// Supprimer le tag de la liste des tags
 				tag.remove();
-				
+
+				// Mettre à jour les éléments de la liste déroulante
 				dropdownListItems.forEach(item => {
 					if (item.querySelector('span').textContent === tagName) {
 						const removeItemBtn = item.querySelector('.remove-item-button');
 						if (removeItemBtn) {
 							removeItemBtn.classList.add('hidden');
-
-							this.listOfTags = this.listOfTags.filter(item => item !== tagName);
-							const newEvent = new CustomEvent('tagChanged', { detail: { tags: this.listOfTags } });
-							document.dispatchEvent(newEvent);
 						}
 						item.classList.remove('bg-yellow');
 					}
 				});
+
+				this.listOfTags = this.listOfTags.filter(tag => tag !== tagName);
+				const newEvent = new CustomEvent('tagRemoved', { detail: { tags: [tagName] } });
+				document.dispatchEvent(newEvent);
 			}
 		});
 	}
