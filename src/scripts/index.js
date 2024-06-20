@@ -98,6 +98,7 @@ document.addEventListener('tagAdded', (event) => {
 document.addEventListener('tagRemoved', (event) => {
     // récupérer les tags
     const tags = event.detail.tags;
+    console.log(tags)
 
     // Filtrer les tags à supprimer
     const uniqueTags = [...new Set(tags)];
