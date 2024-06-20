@@ -6,7 +6,6 @@ export default class RecipeTemplate {
 	}
 	
 	generate() {
-		const recipesContainer = document.querySelector('.recipes');
 		const ingredients = this.recipe.ingredients.map((ingredient) => {
 			return new Ingredient(ingredient.ingredient, ingredient.quantity, ingredient.unit);
 		});
