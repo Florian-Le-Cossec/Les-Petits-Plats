@@ -3,6 +3,11 @@ function formatString(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+function clearSearchInput() {
+    const searchInput = document.querySelector('.main-search');
+    searchInput.value = '';
+}
+
 // Fonction pour effectuer la recherche principale
 function mainSearch(query, recipes) {
     // Si la requête est trop courte, retourne un tableau vide
@@ -49,4 +54,4 @@ function mainSearch(query, recipes) {
     return filteredRecipes;
 }
 
-export { formatString, mainSearch };
+export { formatString, clearSearchInput, mainSearch };
