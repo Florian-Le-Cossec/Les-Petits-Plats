@@ -1,6 +1,6 @@
 import { recipes } from '../data/recipes.js';
 import { SelectorTemplate } from './template/selectorTemplate.js';
-import { formatString } from './utils.js';
+import { formatString, clearSearchInput } from './utils.js';
 import RecipeTemplate from './template/RecipeTemplate.js';
 import RecipeModel from './models/RecipeModel.js';
 
@@ -146,6 +146,25 @@ function displayRecipes(recipes) {
         recipeNumber.textContent = `${recipes.length} recettes`;
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const clearButton = document.querySelector('.clear');
+    const searchInput = document.querySelector('.main-search');
+
+    // Initial visibility check
+    clearButton.style.display = searchInput.value ? 'block' : 'none';
+
+    // Event listener to clear the input
+    clearButton.addEventListener('click', () => {
+        clearSearchInput();
+        clearButton.style.display = 'none';
+    });
+
+    // Event listener to toggle the visibility of the clear button
+    searchInput.addEventListener('input', () => {
+        clearButton.style.display = searchInput.value ? 'block' : 'none';
+    });
+});
 
 // function pour initialiser l'application
 function init() {
