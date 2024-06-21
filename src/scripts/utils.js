@@ -10,38 +10,41 @@ function clearSearchInput() {
 
 // Fonction pour effectuer la recherche principale
 function mainSearch(query, recipes) {
-    // Si la requête est trop courte, retourne un tableau vide
-    if (query.length < 3) return [];
+    const normalizeString = (str) => 
+        str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[-\s]/g, '').toLowerCase();
 
-    const lowerCaseQuery = query.toLowerCase();
+    const lowerCaseQuery = normalizeString(query);
     const filteredRecipes = [];
 
-    for (let recipe of recipes) {
+    for (let i = 0; i < recipes.length; i++) {
+        let recipe = recipes[i];
         let match = false;
 
         // Vérifie le nom de la recette
-        if (recipe.name.toLowerCase().includes(lowerCaseQuery)) {
+        if (normalizeString(recipe.name).includes(lowerCaseQuery)) {
             match = true;
         }
 
         // Vérifie les ingrédients
-        for (let ingredient of recipe.ingredients) {
-            if (ingredient.ingredient.toLowerCase().includes(lowerCaseQuery)) {
+        for (let j = 0; j < recipe.ingredients.length; j++) {
+            let ingredient = recipe.ingredients[j];
+            if (normalizeString(ingredient.ingredient).includes(lowerCaseQuery)) {
                 match = true;
                 break;
             }
         }
 
         // Vérifie les ustensiles
-        for (let ustensil of recipe.ustensils) {
-            if (ustensil.toLowerCase().includes(lowerCaseQuery)) {
+        for (let k = 0; k < recipe.ustensils.length; k++) {
+            let ustensil = recipe.ustensils[k];
+            if (normalizeString(ustensil).includes(lowerCaseQuery)) {
                 match = true;
                 break;
             }
         }
 
         // Vérifie l'appareil
-        if (recipe.appliance.toLowerCase().includes(lowerCaseQuery)) {
+        if (normalizeString(recipe.appliance).includes(lowerCaseQuery)) {
             match = true;
         }
 

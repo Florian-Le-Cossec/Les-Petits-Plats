@@ -150,6 +150,14 @@ function displayRecipes(recipes) {
 // Function to handle main search input
 function handleMainSearch(event) {
     const query = event.target.value;
+    // Ne rien faire si la longueur de la requête est inférieure à 3 caractères
+    if (query.length < 3) {
+        clearRecipes();
+        updateSelectors(recipes);
+        displayRecipes(recipes);
+        return;
+    }
+
     const filteredRecipes = mainSearch(query, recipes);
     updateSelectors(filteredRecipes);
     displayRecipes(filteredRecipes);
@@ -171,6 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
     clearButton.addEventListener('click', () => {
         clearSearchInput();
         clearButton.style.display = 'none';
+        // Réinitialiser les recettes et les selectors
+        clearRecipes();
+        updateSelectors(recipes);
+        displayRecipes(recipes);
     });
 
     // Event listener to toggle the visibility of the clear button
