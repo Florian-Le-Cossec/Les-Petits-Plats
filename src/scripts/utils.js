@@ -11,7 +11,10 @@ function clearSearchInput() {
 // Fonction pour effectuer la recherche principale
 function mainSearch(query, recipes) {
     const normalizeString = (str) => 
-        str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[-\s]/g, '').toLowerCase();
+        str.normalize('NFD')  // normalize 'nfd' permet de décomposer les caractères accentués
+           .replace(/[\u0300-\u036f]/g, '') // enlever les diacritiques (accents)
+           .replace(/[^a-zA-Z]/g, '') // enlever tout caractère non alphanumérique
+           .toLowerCase();
 
     const lowerCaseQuery = normalizeString(query);
     const filteredRecipes = [];
