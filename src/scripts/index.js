@@ -1,6 +1,6 @@
 import { recipes } from '../data/recipes.js';
 import { SelectorTemplate } from './template/selectorTemplate.js';
-import { formatString } from './utils.js';
+import { formatString, mainSearch } from './utils.js';
 import RecipeTemplate from './template/RecipeTemplate.js';
 import RecipeModel from './models/RecipeModel.js';
 
@@ -146,6 +146,18 @@ function displayRecipes(recipes) {
         recipeNumber.textContent = `${recipes.length} recettes`;
     }
 }
+
+// Function to handle main search input
+function handleMainSearch(event) {
+    const query = event.target.value;
+    const filteredRecipes = mainSearch(query, recipes);
+    updateSelectors(filteredRecipes);
+    displayRecipes(filteredRecipes);
+}
+
+// Add event listener for main search input
+const searchInput = document.querySelector('.main-search');
+searchInput.addEventListener('input', handleMainSearch);
 
 // function pour initialiser l'application
 function init() {
