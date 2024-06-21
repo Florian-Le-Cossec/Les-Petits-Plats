@@ -148,19 +148,20 @@ function displayRecipes(recipes) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Sélectionner le bouton de suppression et l'input search
     const clearButton = document.querySelector('.clear');
     const searchInput = document.querySelector('.main-search');
-
-    // Initial visibility check
+    
+    // vérifie si le bouton de suppression est display
     clearButton.style.display = searchInput.value ? 'block' : 'none';
 
-    // Event listener to clear the input
+    // Écouteur d'événement pour effacer l'input search
     clearButton.addEventListener('click', () => {
         clearSearchInput();
         clearButton.style.display = 'none';
     });
 
-    // Event listener to toggle the visibility of the clear button
+    // Écouteur d'événement pour toggle le btn suppression
     searchInput.addEventListener('input', () => {
         clearButton.style.display = searchInput.value ? 'block' : 'none';
     });
