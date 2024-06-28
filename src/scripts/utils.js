@@ -46,6 +46,11 @@ function mainSearch(query, recipes) {
             }
         }
 
+        // Vérifie la description
+        if (normalizeString(recipe.description).includes(lowerCaseQuery)) {
+            match = true;
+        }
+
         // Vérifie l'appareil
         if (normalizeString(recipe.appliance).includes(lowerCaseQuery)) {
             match = true;
