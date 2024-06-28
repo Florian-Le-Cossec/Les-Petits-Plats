@@ -150,7 +150,6 @@ function displayRecipes(recipes) {
 // Fonction pour gérer la recherche principale
 function handleMainSearch(event) {
     const query = event.target.value;
-
     // Ne rien faire si la longueur de la requête est inférieure à 3 caractères
     if (query.length < 3) {
         clearRecipes();
@@ -158,7 +157,7 @@ function handleMainSearch(event) {
         displayRecipes(recipes);
         return;
     }
-
+    
     // Filtrer les recettes en fonction de la requête
     const filteredRecipes = mainSearch(query, recipes);
     updateSelectors(filteredRecipes);
@@ -170,18 +169,23 @@ const searchInput = document.querySelector('.main-search');
 // Ajouter un écouteur d'événement sur l'input search
 searchInput.addEventListener('input', handleMainSearch);
 
+
 document.addEventListener('DOMContentLoaded', () => {
     // Sélectionner le bouton de suppression et l'input search
     const clearButton = document.querySelector('.clear');
     const searchInput = document.querySelector('.main-search');
 
-    // vérifie si le bouton de suppression est display
+     // vérifie si le bouton de suppression est display
     clearButton.style.display = searchInput.value ? 'block' : 'none';
 
     // Écouteur d'événement pour effacer l'input search
     clearButton.addEventListener('click', () => {
         clearSearchInput();
         clearButton.style.display = 'none';
+        // Réinitialiser les recettes et les selectors
+        clearRecipes();
+        updateSelectors(recipes);
+        displayRecipes(recipes);
     });
 
     // Écouteur d'événement pour toggle le btn suppression
