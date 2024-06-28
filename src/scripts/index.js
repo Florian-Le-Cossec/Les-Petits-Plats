@@ -124,10 +124,27 @@ function displayRecipes(recipes) {
 
     // vérifier si il n'y a pas de recette  
     if (recipes.length === 0) {
-        // créer un élément h3 pour afficher un message
-        const noRecipeMessage = document.createElement('h3');
-        noRecipeMessage.textContent = 'Aucune recette trouvée';
-        recipeContainer.appendChild(noRecipeMessage);
+        // vérifier si le message existe déjà
+        let noRecipeMessage = document.querySelector('.no-recipe-message');
+        if (!noRecipeMessage) {
+            // créer un élément h3 pour afficher un message
+            noRecipeMessage = document.createElement('h3');
+            noRecipeMessage.classList.add('no-recipe-message', 'mt-10', 'text-xl');
+            const searchInputValue = document.querySelector('.main-search').value;
+            noRecipeMessage.textContent = `Aucune recette ne contient "${searchInputValue}". Vous pouvez chercher « tarte aux pommes », « poisson », etc.`;
+            // insérer le message avant le conteneur des recettes
+            recipeContainer.parentNode.insertBefore(noRecipeMessage, recipeContainer);
+        } else {
+            // mettre à jour le message existant
+            const searchInputValue = document.querySelector('.main-search').value;
+            noRecipeMessage.textContent = `Aucune recette ne contient "${searchInputValue}". Vous pouvez chercher « tarte aux pommes », « poisson », etc.`;
+        }
+    } else {
+        // supprimer le message s'il existe
+        const noRecipeMessage = document.querySelector('.no-recipe-message');
+        if (noRecipeMessage) {
+            noRecipeMessage.remove();
+        }
     }
 
     // parcourir les recettes pour afficher les recettes    
