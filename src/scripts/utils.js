@@ -17,7 +17,7 @@ function mainSearch(query, recipes) {
     const lowerCaseQuery = normalizeString(query);
     const filteredRecipes = [];
 
-    for (let recipe of recipes) {
+    recipes.forEach((recipe) => {
         let match = false;
 
         // Vérifie le nom de la recette
@@ -26,20 +26,18 @@ function mainSearch(query, recipes) {
         }
 
         // Vérifie les ingrédients
-        for (let ingredient of recipe.ingredients) {
+        recipe.ingredients.forEach((ingredient) => {
             if (normalizeString(ingredient.ingredient).includes(lowerCaseQuery)) {
                 match = true;
-                break;
             }
-        }
+        });
 
         // Vérifie les ustensiles
-        for (let ustensil of recipe.ustensils) {
+        recipe.ustensils.forEach((ustensil) => {
             if (normalizeString(ustensil).includes(lowerCaseQuery)) {
                 match = true;
-                break;
             }
-        }
+        });
 
         // Vérifie l'appareil
         if (normalizeString(recipe.appliance).includes(lowerCaseQuery)) {
@@ -50,7 +48,7 @@ function mainSearch(query, recipes) {
         if (match) {
             filteredRecipes.push(recipe);
         }
-    }
+    });
 
     return filteredRecipes;
 }
