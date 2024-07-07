@@ -6,5 +6,8 @@ Voici les différente implémentation de la recherche principale:
 
 ```bash
 git checkout search-for-loop
+```
+
+```bash
 git checkout main
 ```
