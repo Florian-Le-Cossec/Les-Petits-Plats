@@ -91,7 +91,7 @@ document.addEventListener('tagAdded', (event) => {
     selectedTags = [...new Set([...selectedTags, ...tags])];
     
     // filtrer les recettes par tags et recherche principale
-    const query = sanitizeInput(document.querySelector('.main-search').value.trim().toLowerCase());
+    const query = sanitizeInput(document.querySelector('.main-search').value.trim());
     const filteredRecipes = filterRecipes(query, selectedTags);
     
     // afficher les recettes filtrées
@@ -169,7 +169,7 @@ function displayRecipes(recipes) {
 
 // function pour gérer la recherche principale
 function handleMainSearch(event) {
-    const query = sanitizeInput(event.target.value.trim().toLowerCase());
+    const query = sanitizeInput(event.target.value.trim());
 
     // Ne rien faire si la longueur de la requête est inférieure à 3 caractères et aucun tag n'est sélectionné
     if (query.length < 3 && selectedTags.length === 0) {
