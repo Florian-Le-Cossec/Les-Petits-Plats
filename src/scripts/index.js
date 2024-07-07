@@ -1,6 +1,6 @@
 import { recipes } from '../data/recipes.js';
 import { SelectorTemplate } from './template/selectorTemplate.js';
-import { formatString, clearSearchInput } from './utils.js';
+import { formatString, clearSearchInput, mainSearch } from './utils.js';
 import RecipeTemplate from './template/RecipeTemplate.js';
 import RecipeModel from './models/RecipeModel.js';
 
@@ -124,10 +124,27 @@ function displayRecipes(recipes) {
 
     // vérifier si il n'y a pas de recette  
     if (recipes.length === 0) {
-        // créer un élément h3 pour afficher un message
-        const noRecipeMessage = document.createElement('h3');
-        noRecipeMessage.textContent = 'Aucune recette trouvée';
-        recipeContainer.appendChild(noRecipeMessage);
+        // vérifier si le message existe déjà
+        let noRecipeMessage = document.querySelector('.no-recipe-message');
+        if (!noRecipeMessage) {
+            // créer un élément h3 pour afficher un message
+            noRecipeMessage = document.createElement('h3');
+            noRecipeMessage.classList.add('no-recipe-message', 'mt-10', 'text-xl');
+            const searchInputValue = document.querySelector('.main-search').value;
+            noRecipeMessage.textContent = `Aucune recette ne contient "${searchInputValue}". Vous pouvez chercher « tarte aux pommes », « poisson », etc.`;
+            // insérer le message avant le conteneur des recettes
+            recipeContainer.parentNode.insertBefore(noRecipeMessage, recipeContainer);
+        } else {
+            // mettre à jour le message existant
+            const searchInputValue = document.querySelector('.main-search').value;
+            noRecipeMessage.textContent = `Aucune recette ne contient "${searchInputValue}". Vous pouvez chercher « tarte aux pommes », « poisson », etc.`;
+        }
+    } else {
+        // supprimer le message s'il existe
+        const noRecipeMessage = document.querySelector('.no-recipe-message');
+        if (noRecipeMessage) {
+            noRecipeMessage.remove();
+        }
     }
 
     // parcourir les recettes pour afficher les recettes    
@@ -147,18 +164,45 @@ function displayRecipes(recipes) {
     }
 }
 
+// Fonction pour gérer la recherche principale
+function handleMainSearch(event) {
+    const query = event.target.value;
+    // Ne rien faire si la longueur de la requête est inférieure à 3 caractères
+    if (query.length < 3) {
+        clearRecipes();
+        updateSelectors(recipes);
+        displayRecipes(recipes);
+        return;
+    }
+    
+    // Filtrer les recettes en fonction de la requête
+    const filteredRecipes = mainSearch(query, recipes);
+    updateSelectors(filteredRecipes);
+    displayRecipes(filteredRecipes);
+}
+
+// sélectionner l'input search
+const searchInput = document.querySelector('.main-search');
+// Ajouter un écouteur d'événement sur l'input search
+searchInput.addEventListener('input', handleMainSearch);
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // Sélectionner le bouton de suppression et l'input search
     const clearButton = document.querySelector('.clear');
     const searchInput = document.querySelector('.main-search');
-    
-    // vérifie si le bouton de suppression est display
+
+     // vérifie si le bouton de suppression est display
     clearButton.style.display = searchInput.value ? 'block' : 'none';
 
     // Écouteur d'événement pour effacer l'input search
     clearButton.addEventListener('click', () => {
         clearSearchInput();
         clearButton.style.display = 'none';
+        // Réinitialiser les recettes et les selectors
+        clearRecipes();
+        updateSelectors(recipes);
+        displayRecipes(recipes);
     });
 
     // Écouteur d'événement pour toggle le btn suppression
