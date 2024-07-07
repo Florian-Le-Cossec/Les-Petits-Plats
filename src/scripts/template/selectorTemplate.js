@@ -1,3 +1,5 @@
+import { sanitizeInput } from '../utils.js'; // Assurez-vous que le chemin est correct
+
 export class SelectorTemplate {
 	constructor(data, type) {
 		this.data = data;
@@ -6,7 +8,7 @@ export class SelectorTemplate {
 		this.listOfTags = [];
 		this.eventsAdded = false;
 	}
-
+	// fonction pour générer un selector
 	generate() {
 		const selectContainer = document.querySelector('.select-container');
 		const searchInput = 
@@ -36,6 +38,7 @@ export class SelectorTemplate {
 			<circle cx="8.5" cy="8.5" r="8.5"/>
 			<path d="M11 11L8.5 8.5M8.5 8.5L6 6M8.5 8.5L11 6M8.5 8.5L6 11" stroke="#FFD15B" stroke-linecap="round" stroke-linejoin="round"/>
 		</svg>
+		<!-- le join permet de concaténer les éléments du tableau en une seule chaîne de caractères -->
 		</li>`).join('');
 
 		const dropdownList = 
@@ -62,11 +65,15 @@ export class SelectorTemplate {
 				<div class="hidden absolute mt-1 h-min bg-white left-0 rounded-b-xl">${dropdownList}</div>
 			</div>
 		`;
+		// la tempDiv est un div temporaire qui contient le selectorHtml
 		const tempDiv = document.createElement('div');
 		tempDiv.innerHTML = selectorHtml;
+		// on récupère le premier enfant du div temporaire
 		this.selector = tempDiv.firstElementChild;
 
+		// on ajoute un écouteur d'événements au bouton du selector
 		this.selector.querySelector('.selector__button').addEventListener('click', function () {
+			// ici le this fait référence au bouton du selector donc on sélectionne l'élément immédiatement suivant ce bouton
 			const dropdown = this.nextElementSibling;
 			const chevron = this.querySelector('.chevron');
 			const searchInput = this.parentElement.querySelector('.search-input');
@@ -152,7 +159,7 @@ export class SelectorTemplate {
 		const dropdownList = this.selector.querySelector('ul');
 	
 		searchInput.addEventListener('input', () => {
-			const query = searchInput.value.toLowerCase();
+			const query = sanitizeInput(searchInput.value.toLowerCase()); // Sanitize input
 			const filteredData = query ? this.data.filter(item => item.toLowerCase().includes(query)) : this.data;
 			const itemList = filteredData.map(item => /*html*/ `<li class="flex items-center justify-between py-2 px-4 text-sm hover:bg-yellow cursor-pointer">
 			<span>${item}</span>
@@ -171,22 +178,32 @@ export class SelectorTemplate {
 	}
 
 	handleAddTag() {
+		// on sélectionne tous les éléments de la liste déroulante
 		const dropdownListItems = this.selector.querySelectorAll('ul li');
+		// on sélectionne l'input de recherche
 		const searchInput = this.selector.querySelector('.search-input');
+		// on parcourt tous les éléments de la liste déroulante
 		dropdownListItems.forEach(item => {
 			item.addEventListener('click', (event) => {
+				// on stoppe la propagation de l'événement
 				event.stopPropagation();
+				// on récupère le texte du span de l'élément cliqué
 				const selectedItem = item.querySelector('span').textContent;
 				const tagList = document.querySelector('.tag-list');
 				const existingTags = tagList.querySelectorAll('.tag span:first-child');
+				
+				// on initialise une variable pour savoir si l'élément est déjà sélectionné
 				let isAlreadySelected = false;
 
+				// on parcourt tous les éléments de la liste des tags
 				existingTags.forEach(tag => {
+					// si l'élément est déjà sélectionné
 					if (tag.textContent === selectedItem) {
 						isAlreadySelected = true;
 					}
 				});
 
+				// si l'élément n'est pas déjà sélectionné
 				if (!isAlreadySelected) {
 					const tag = 
 					/*html*/ 
@@ -200,10 +217,13 @@ export class SelectorTemplate {
 							</button>
 						</div>
 					`;
-
+					// on ajoute l'élément à la liste des tags
 					this.listOfTags.push(selectedItem);
+					// on crée un nouvel événement personnalisé
 					const event = new CustomEvent('tagAdded', { detail: { tags: this.listOfTags } });
+					// on dispatch l'event pour pouvoir l'écouter depuis l'index.js
 					document.dispatchEvent(event);
+					// on ajoute l'élément à la liste des tags
 					tagList.innerHTML += tag;
 					item.classList.add('bg-yellow');
 					const removeItemBtn = item.querySelector('.remove-item-button');
@@ -217,46 +237,59 @@ export class SelectorTemplate {
 	}
 
 	handleRemoveTagFromList() {
+		// on sélectionne tous les éléments de la liste déroulante
 		const dropdownListItems = this.selector.querySelectorAll('ul li');
+		// on sélectionne la liste des tags
 		const tagListElement = document.querySelector('.tag-list');
-		
+		// on parcourt tous les éléments de la liste déroulante
 		dropdownListItems.forEach(item => {
+			// on sélectionne le bouton de suppression de l'élément
 			const svgItem = item.querySelector('.remove-item-button');
 			svgItem.addEventListener('click', (event) => {
 				event.stopPropagation();
-
+				// on récupère le texte du span de l'élément cliqué
 				const tagName = item.querySelector('span').textContent;
+				// on sélectionne tous les éléments de la liste des tags
 				const existingTags = tagListElement.querySelectorAll('.tag');
-				
+				// on parcourt tous les éléments de la liste des tags
 				existingTags.forEach(tag => {
 					const span = tag.querySelector('span:first-child');
-					
+					// si l'élément est déjà sélectionné
 					if (span.textContent === tagName) {
+						// on retire l'élément de la liste des tags
 						tag.remove();
 						this.listOfTags = this.listOfTags.filter(tag => tag !== tagName);
+						// on dispatch l'event pour pouvoir l'écouter depuis l'index.js
 						const newEvent = new CustomEvent('tagRemoved', { detail: { tags: [tagName] } });
 						document.dispatchEvent(newEvent);
 					}
 				});
+				// on cache le bouton de suppression de l'élément
 				svgItem.classList.add('hidden');
+				// on retire la classe bg-yellow de l'élément
 				item.classList.remove('bg-yellow');
 			});
 		});
 	}
 
 	handleRemoveTagFromTagList() {
-		// flag pour éviter d'ajouter plusieurs fois les événements
+		// flag pour éviter d'ajouter plusieurs fois les événements on ajoute un flag
 		if (this.eventsAdded) return;
 		this.eventsAdded = true;
-
+		// on sélectionne la liste des tags
 		const tagListElement = document.querySelector('.tag-list');
+		// on sélectionne tous les éléments de la liste déroulante
 		const dropdownListItems = this.selector.querySelectorAll('ul li');
-
+		// on ajoute un écouteur d'événements à la liste des tags
 		tagListElement.addEventListener('click', (event) => {
 			event.stopPropagation();
+			// on sélectionne le bouton de suppression du tag
 			const removeButton = event.target.closest('.remove-tag-button');
+			// si le bouton de suppression existe
 			if (removeButton) {
+				// on sélectionne le tag parent
 				const tag = removeButton.closest('.tag');
+				// on récupère le texte du span du tag
 				const tagName = tag.querySelector('span').textContent;
 
 				// Supprimer le tag de la liste des tags
@@ -272,8 +305,9 @@ export class SelectorTemplate {
 						item.classList.remove('bg-yellow');
 					}
 				});
-
+				// on retire l'élément de la liste des tags
 				this.listOfTags = this.listOfTags.filter(tag => tag !== tagName);
+				// on dispatch l'event pour pouvoir l'écouter depuis l'index.js
 				const newEvent = new CustomEvent('tagRemoved', { detail: { tags: [tagName] } });
 				document.dispatchEvent(newEvent);
 			}

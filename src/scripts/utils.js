@@ -14,6 +14,11 @@ function normalizeString(str) {
         .toLowerCase(); // mettre en minuscules
 }
 
+
+function sanitizeInput(input) {
+    return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 function mainSearch(query, recipes) {
     const lowerCaseQuery = normalizeString(query);
     // filter les recettes qui contiennent le query dans leur nom, description, appliance, ustensils ou ingredients
@@ -31,4 +36,4 @@ function mainSearch(query, recipes) {
     });
 }
 
-export { formatString, clearSearchInput, mainSearch };
+export { formatString, clearSearchInput, mainSearch, sanitizeInput };

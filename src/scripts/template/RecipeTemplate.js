@@ -5,14 +5,13 @@ export default class RecipeTemplate {
 		this.recipe = recipe;
 	}
 	
+	// méthode qui permet de générer le html de la recette
 	generate() {
+		// on crée un tableau d'objets Ingredient à partir de la liste des ingrédients de la recette
 		const ingredients = this.recipe.ingredients.map((ingredient) => {
 			return new Ingredient(ingredient.ingredient, ingredient.quantity, ingredient.unit);
 		});
-
-		const emptyHtml = /*html*/`
-			<h3>Aucune recette trouvée</h3>
-		`;
+		// on crée le html de la recette
 		const recipeHtml = 
 		/*html*/
 		`
