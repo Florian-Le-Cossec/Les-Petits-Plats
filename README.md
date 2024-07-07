@@ -1,13 +1,10 @@
 # Project 7 - Les Petits Plats
 
-Pour visionner les deux implémentations de la recherche, il faut checkout sur les branches suivantes :
-- `main-search-first-option` pour la recherche avec boucles natives
-- `main-search-second-option` pour la recherche avec boucle filter
+Voici les différente implémentation de la recherche principale:
+- `main` pour la recherche avec boucle filter
+- `search-for-loop` pour la recherche avec boucles natives
 
 ```bash
-git checkout main-search-first-option
-```
-
-```bash
-git checkout main-search-second-option
+git checkout search-for-loop
+git checkout main
 ```
