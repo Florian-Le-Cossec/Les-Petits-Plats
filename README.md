@@ -5,9 +5,9 @@ Voici les différente implémentation de la recherche principale:
 - `search-for-loop` pour la recherche avec boucles natives
 
 ```bash
-git checkout search-for-loop
+git checkout main
 ```
 
 ```bash
-git checkout main
+git checkout search-for-loop
 ```
