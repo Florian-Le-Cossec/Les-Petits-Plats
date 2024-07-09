@@ -15,6 +15,10 @@ function normalizeString(str) {
            .toLowerCase();
 }
 
+function sanitizeInput(input) {
+    return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 function searchInIngredients(query, recipe) {
     for (let j = 0; j < recipe.ingredients.length; j++) {
         let ingredient = recipe.ingredients[j];
@@ -74,4 +78,4 @@ function mainSearch(query, recipes) {
     return filteredRecipes;
 }
 
-export { formatString, clearSearchInput, mainSearch };
+export { formatString, clearSearchInput, mainSearch, sanitizeInput };

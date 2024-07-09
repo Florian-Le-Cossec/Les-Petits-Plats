@@ -1,6 +1,6 @@
 import { recipes } from '../data/recipes.js';
-import { SelectorTemplate } from './template/selectorTemplate.js';
-import { formatString, clearSearchInput, mainSearch } from './utils.js';
+import { SelectorTemplate } from './template/SelectorTemplate.js';
+import { formatString, clearSearchInput, mainSearch, sanitizeInput } from './utils.js';
 import RecipeTemplate from './template/RecipeTemplate.js';
 import RecipeModel from './models/RecipeModel.js';
 
@@ -42,10 +42,12 @@ function initializeSelectors() {
 const { ingredientSelector, ustensilSelector, applianceSelector } = initializeSelectors();
 
 // function pour filtrer les recettes par tags
-function filterRecipesByTags(tags) {
-    // filtrer les recettes par tags
-    const filteredRecipes = recipes.filter(recipe => {
-        // vérifier si chaque tag correspond à un ingrédient, un ustensil ou un appareil
+function filterRecipes(query, tags) {
+    // Utiliser mainSearch pour filtrer les recettes par la recherche principale
+    const mainSearchResults = mainSearch(query, recipes);
+
+    // Filtrer les résultats de mainSearch par tags
+    const filteredRecipes = mainSearchResults.filter(recipe => {
         return tags.every(tag => 
             recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase() === tag.toLowerCase()) ||
             recipe.ustensils.some(ustensil => ustensil.toLowerCase() === tag.toLowerCase()) ||
@@ -53,10 +55,10 @@ function filterRecipesByTags(tags) {
         );
     });
 
-    // mettre à jour les selectors
+    // Mettre à jour les selectors
     updateSelectors(filteredRecipes);
     
-    // retourner les recettes filtrées
+    // Retourner les recettes filtrées
     return filteredRecipes;
 }
 
@@ -87,9 +89,12 @@ document.addEventListener('tagAdded', (event) => {
     
     // ajouter les tags à selectedTags en évitant les doublons
     selectedTags = [...new Set([...selectedTags, ...tags])];
+    // filtrer les recettes par tags et recherche principale
+    const query = sanitizeInput(document.querySelector('.main-search').value.trim());
+    const filteredRecipes = filterRecipes(query, selectedTags);
     
-    // filtrer les recettes par tags
-    const filteredRecipes = filterRecipesByTags(selectedTags);
+    // afficher les recettes filtrées
+    displayRecipes(filteredRecipes);
     
     // afficher les recettes filtrées
     displayRecipes(filteredRecipes);
@@ -98,14 +103,14 @@ document.addEventListener('tagAdded', (event) => {
 document.addEventListener('tagRemoved', (event) => {
     // récupérer les tags
     const tags = event.detail.tags;
-    console.log(tags)
 
     // Filtrer les tags à supprimer
     const uniqueTags = [...new Set(tags)];
     selectedTags = selectedTags.filter(tag => !uniqueTags.includes(tag));
 
-    // Filtrer et afficher les recettes
-    const filteredRecipes = filterRecipesByTags(selectedTags);
+    // Filtrer les recettes par tags et recherche principale
+    const query = sanitizeInput(document.querySelector('.main-search').value.trim().toLowerCase());
+    const filteredRecipes = filterRecipes(query, selectedTags);
     displayRecipes(filteredRecipes);
 });
 
@@ -166,18 +171,18 @@ function displayRecipes(recipes) {
 
 // Fonction pour gérer la recherche principale
 function handleMainSearch(event) {
-    const query = event.target.value;
-    // Ne rien faire si la longueur de la requête est inférieure à 3 caractères
-    if (query.length < 3) {
+    const query = sanitizeInput(event.target.value.trim());
+
+    // Ne rien faire si la longueur de la requête est inférieure à 3 caractères et aucun tag n'est sélectionné
+    if (query.length < 3 && selectedTags.length === 0) {
         clearRecipes();
         updateSelectors(recipes);
         displayRecipes(recipes);
         return;
     }
     
-    // Filtrer les recettes en fonction de la requête
-    const filteredRecipes = mainSearch(query, recipes);
-    updateSelectors(filteredRecipes);
+    // Filtrer les recettes en fonction de la requête et des tags
+    const filteredRecipes = filterRecipes(query, selectedTags);
     displayRecipes(filteredRecipes);
 }
 
